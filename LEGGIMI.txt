@@ -1,0 +1,47 @@
+S33 - HEXA · v1 (1.0.0)
+=======================
+
+Synth FM a sei operatori, fedele al DX7: 32 algoritmi, inviluppi a 4 rate e 4 livelli, scaling di
+tastiera, velocity, pitch envelope, LFO, 16 voci. Carica e salva i banchi DX7 (.syx).
+Funziona da sola (PWA) e come modulo della S33 - Mother Board.
+
+IN ALTO (sempre visibile)
+  - Display: numero e nome della voce, algoritmo. "*" = la voce è stata modificata e non ancora salvata
+    nel banco. Doppio clic sul display per rinominare la voce (10 caratteri, come sul DX7).
+  - Banco da 32 voci: un clic per sceglierne una. Il banco di serie è S33 CLASSICS (suoni nostri).
+  - LOAD .SYX: carica un banco DX7 da 32 voci (diventa un banco nuovo nel menu) o una voce singola
+    (va nella voce corrente: STORE per tenerla). SAVE .SYX: salva il banco per Dexed, il DX7 vero e altri.
+  - STORE: scrive la voce modificata nel banco (con dentro le manopole della pagina EASY).
+    COMPARE (tienilo premuto): senti la voce com'era nel banco. INIT (due clic): voce vuota.
+  - Menu dei banchi: "✕ Remove this bank" toglie un banco caricato (S33 CLASSICS resta).
+
+PAGINA EASY
+  Otto manopole che lavorano su tutti gli operatori insieme: BRIGHTNESS (quanto mordono i modulatori),
+  ATTACK, DECAY, RELEASE (gli inviluppi dei carrier), METAL (stona i rapporti: campane, gong), VELOCITY,
+  TONE (scuro ↔ brillante), VOLUME. Cambiando voce le prime cinque tornano al centro; STORE le scrive
+  nella voce. CHARACTER mostra gli armonici veri del suono. Effetti (non c'erano sul DX7): chorus,
+  delay a 1/8 puntato (a tempo con il Clock nella Mother Board), riverbero. PLAY: estensione del pitch
+  bend, quanto vibrato dà la rotella di modulazione, trasposizione, glide; POLY / MONO / MONO GLIDE.
+
+PAGINA OPERATORS
+  - L'algoritmo disegnato: gialli i carrier (quelli che senti), azzurri i modulatori, rosso il feedback.
+    Sotto i 32 algoritmi. FEEDBACK 0–7, OSC SYNC, LFO SYNC.
+  - Sei strisce, una per operatore: acceso/spento; frequenza (trascina: coarse, Maiusc: fine; clic su
+    RATIO/Hz per la frequenza fissa); detune; livello d'uscita; inviluppo (trascina i punti: su/giù il
+    livello, destra/sinistra il rate) e i suoi numeri R1–R4, L1–L4; VEL, RATE SC, AMS; KBD SCALE (clic:
+    break point, profondità e curve a sinistra e a destra).
+  - PITCH ENVELOPE, LFO (forma, velocità, ritardo, PMD, AMD, PMS), VOICE (trasposizione della voce…).
+  Tutti i numeri si trascinano su/giù (o con la rotella). La barra spaziatrice suona un Do di prova;
+  anche la tastiera del Mac suona (A W S E D F T G Y H U J K).
+
+DA SAPERE
+  - I suoni di fabbrica del DX7 non sono inclusi (sono di Yamaha), ma qualunque banco .syx si carica.
+  - Il motore segue da vicino il DX7 (livelli, inviluppi, scaling) ma non è un'emulazione al bit:
+    alcuni banchi possono suonare un po' diversi dall'originale.
+  - I suoni S33 CLASSICS sono un punto di partenza: vanno rifiniti a orecchio.
+  - MIDI: note, velocity, pitch bend, rotella (CC1), sustain (CC64), All Notes Off.
+
+INSTALLARE
+  Come le altre app S33: GitHub Pages, oppure  python3 -m http.server 8036  nella cartella e poi
+  http://localhost:8036 in Chrome → Installa. Per una versione nuova cambia VERSIONE in sw.js.
+  I sorgenti sono nella cartella src (build.py li monta in index.html).
