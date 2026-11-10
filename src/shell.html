@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>S33 - Hexa</title>
+<meta name="description" content="Six-operator FM synthesizer: 32 algorithms, 16 voices, loads and saves DX7 .syx banks.">
+<meta name="theme-color" content="#211c19">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Hexa">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
+<link rel="icon" type="image/svg+xml" href="icons/icon.svg">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<style>
+:root{--ink:#efe7d6;--mut:#9c9182;--b1:#2c2622;--b2:#211c19;--lcd:#c4dc72;--lcdbg:#1b2210;--m1:#c8644f;--m2:#d9a441;--m3:#7fa58e;--m4:#d8cfbc;--car:#e8b04a;--mod:#7fb3c9}
+*{box-sizing:border-box}
+html,body{margin:0;overflow:hidden;background:#0a0908;color:var(--ink);font:600 12px/1.2 -apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;-webkit-user-select:none;user-select:none}
+#fit{display:flex;justify-content:center;align-items:flex-start}
+#stage{width:1400px;flex:none;transform-origin:top center}
+.body{border-radius:14px;background:linear-gradient(180deg,#3a322c 0,var(--b1) 4%,var(--b2) 100%);border:1px solid #000;box-shadow:0 30px 60px #000c,inset 0 1px 0 #ffffff1c;padding:16px 20px 16px;position:relative}
+.body::after{content:"";position:absolute;left:20px;right:20px;top:0;height:3px;background:linear-gradient(90deg,var(--m1) 0 33%,var(--m2) 0 66%,var(--m3) 0)}
+button{font:inherit;color:inherit;border:0;background:none;padding:0;cursor:pointer}
+.top{display:flex;align-items:center;gap:16px}
+.logo{display:flex;flex-direction:column;gap:6px;white-space:nowrap}
+.logo .a{display:flex;align-items:center;gap:10px}
+.logo .s{border:2px solid var(--ink);padding:1px 6px;font:700 13px/1.2 "Helvetica Neue",Arial;letter-spacing:.08em}
+.logo .n{font:800 30px/1 "Helvetica Neue",Arial;letter-spacing:.3em}
+.logo small{font:700 9px/1 sans-serif;letter-spacing:.34em;color:var(--mut)}
+#pow{width:38px;height:38px;border-radius:50%;background:#3b332d;box-shadow:inset 0 1px 0 #ffffff1a,0 2px 0 #000;font-size:16px;color:var(--mut)}
+#pow.on{background:#2a3a1a;color:var(--lcd);box-shadow:0 0 10px #c4dc7255}
+.lcd{width:440px;height:72px;border-radius:6px;background:linear-gradient(#0f140a,var(--lcdbg));border:3px solid #0b0a09;box-shadow:inset 0 0 0 1px #3a4520,inset 0 4px 12px #000;padding:9px 12px;font:500 20px/1.2 "Courier New",ui-monospace,monospace;color:var(--lcd);text-shadow:0 0 6px #c4dc7288;letter-spacing:.06em;white-space:pre;overflow:hidden;cursor:text}
+.lcd .l2{font-size:13px;opacity:.78;letter-spacing:.08em}
+.lcd input{font:inherit;color:inherit;background:none;border:0;outline:0;letter-spacing:inherit;width:11ch;padding:0;text-transform:uppercase}
+.mem{display:flex;flex-direction:column;gap:6px}
+.cap{font:700 8.5px/1 sans-serif;letter-spacing:.26em;color:var(--mut);white-space:nowrap}
+.mb{display:inline-flex;align-items:center;justify-content:center;height:30px;padding:0 12px;border-radius:4px;font:800 9.5px/1 sans-serif;letter-spacing:.14em;color:#1b1714;box-shadow:inset 0 -2px 0 #0003,inset 0 1px 0 #fff6,0 2px 0 #000;white-space:nowrap}
+.mb:active{transform:translateY(1px);box-shadow:inset 0 -1px 0 #0003,0 1px 0 #000}
+.mb.c1{background:var(--m1);color:#fff}.mb.c2{background:var(--m2)}.mb.c3{background:var(--m3)}.mb.c4{background:var(--m4)}
+.mb.dark{background:#3b332d;color:var(--ink);box-shadow:inset 0 1px 0 #ffffff1a,0 2px 0 #000}
+.mb.on{background:var(--m2);color:#1b1714}
+.mb.warn{background:var(--m1);color:#fff}
+select.mb{appearance:none;-webkit-appearance:none;border:0;font:800 9.5px/1 sans-serif;padding:0 26px 0 12px;background:var(--m4) url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6'><path d='M0 0h10L5 6z' fill='%231b1714'/></svg>") no-repeat right 10px center;max-width:170px}
+.row{display:flex;gap:6px;align-items:center}
+.sp{flex:1}
+.tabs{display:flex;gap:4px;background:#14110f;border-radius:8px;padding:3px;border:1px solid #000}
+.tabs span{padding:9px 14px;border-radius:5px;font:800 10px/1 sans-serif;letter-spacing:.2em;color:var(--mut);cursor:pointer}
+.tabs span.on{background:var(--m4);color:#1b1714}
+.bank{display:grid;grid-template-columns:repeat(16,1fr);gap:4px;margin-top:14px}
+.bank span{height:34px;border-radius:4px;background:#3b332d;box-shadow:inset 0 1px 0 #ffffff14,0 2px 0 #000;display:flex;flex-direction:column;justify-content:center;padding:0 6px;gap:3px;overflow:hidden;cursor:pointer}
+.bank span:hover{background:#4a4038}
+.bank span b{font:700 8px/1 ui-monospace,monospace;color:var(--mut)}
+.bank span i{font:700 9px/1 sans-serif;font-style:normal;letter-spacing:.04em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bank span.on{background:var(--m2);color:#1b1714}.bank span.on b{color:#4a3a1a}
+.page{margin-top:14px;display:none}.page.on{display:block}
+.pnl{background:#1a1613;border:1px solid #0b0a09;border-radius:10px;padding:12px 14px;box-shadow:inset 0 1px 0 #ffffff0d;position:relative}
+.ph{display:flex;align-items:center;gap:9px;margin-bottom:10px}
+.ph h3{margin:0;font:800 10px/1 sans-serif;letter-spacing:.3em}.ph .ln{flex:1;height:1px;background:#3b332d}
+/* knob */
+.kn{display:flex;flex-direction:column;align-items:center;gap:4px;cursor:ns-resize;touch-action:none}
+.kn b{font:800 9px/1 sans-serif;letter-spacing:.14em;white-space:nowrap}.kn em{font:500 10px/1 ui-monospace,monospace;font-style:normal;color:var(--mut);white-space:nowrap}
+.kn small{font:500 10px/1.3 -apple-system,sans-serif;color:var(--mut);text-align:center;max-width:150px}
+/* easy */
+.easy{display:grid;grid-template-columns:1fr 340px;gap:14px}
+.macros{display:grid;grid-template-columns:repeat(4,1fr);gap:18px 10px;padding:6px 4px}
+.macros .kn b{font-size:11px}
+.fx{display:flex;flex-direction:column;gap:12px}
+.mini{display:flex;gap:10px;justify-content:space-around}
+#spec{height:120px;width:100%;display:block;border-radius:8px;background:#0f0d0b;border:1px solid #2b2521}
+/* deep */
+.deep{display:grid;grid-template-columns:330px minmax(0,1fr);gap:14px}
+.algs{display:grid;grid-template-columns:repeat(8,1fr);gap:3px;margin-top:10px}
+.algs span{height:22px;border-radius:3px;background:#2b2521;font:700 9px/22px ui-monospace,monospace;text-align:center;color:var(--mut);cursor:pointer}
+.algs span:hover{background:#3b332d}
+.algs span.on{background:var(--m2);color:#1b1714}
+.ops{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px}
+.op{background:#14110f;border:1px solid #0b0a09;border-radius:9px;padding:9px;display:flex;flex-direction:column;gap:7px;min-width:0;position:relative}
+.op.sel{box-shadow:0 0 0 2px var(--ink)}
+.op.off{opacity:.45}
+.op .h{display:flex;align-items:center;gap:7px}
+.op .h b{font:800 18px/1 "Helvetica Neue",Arial}
+.op .h em{font-style:normal;font:800 8px/1 sans-serif;letter-spacing:.14em;padding:4px 6px;border-radius:3px;color:#1b1714}
+.op .h .tg{margin-left:auto;width:26px;height:14px;border-radius:7px;background:#5fcf86;position:relative;cursor:pointer;flex:none}.op .h .tg::after{content:"";position:absolute;right:2px;top:2px;width:10px;height:10px;border-radius:50%;background:#fff}
+.op.off .h .tg{background:#3b332d}.op.off .h .tg::after{right:auto;left:2px}
+.op .meter{position:absolute;left:9px;right:9px;bottom:3px;height:2px;border-radius:1px;background:var(--car);opacity:0}
+.fr{display:flex;align-items:baseline;gap:5px;background:#0b0e07;border-radius:5px;padding:6px 7px;font:500 15px/1 "Courier New",monospace;color:var(--lcd);text-shadow:0 0 5px #c4dc7266;white-space:nowrap;overflow:hidden}
+.fr span{cursor:ns-resize;touch-action:none}
+.fr small{font-size:9px;opacity:.7;letter-spacing:.06em;cursor:pointer}
+.lvl{display:flex;align-items:center;gap:6px}
+.lvl .bar{flex:1;height:10px;border-radius:5px;background:#2b2521;position:relative;overflow:hidden;cursor:ew-resize;touch-action:none}.lvl .bar i{position:absolute;left:0;top:0;bottom:0;border-radius:5px}
+.lvl span{font:700 11px/1 ui-monospace,monospace;width:22px;text-align:right}
+.env{height:62px;width:100%;display:block;border-radius:6px;background:#0f0d0b;border:1px solid #2b2521;touch-action:none}
+.nums{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;font:700 9px/1.4 ui-monospace,monospace;color:var(--mut);text-align:center}
+.nums div{cursor:ns-resize;touch-action:none;border-radius:3px}.nums div:hover{background:#221d1a}
+.nums b{color:var(--ink);font-weight:700}
+.small{display:grid;grid-template-columns:1fr 1fr;gap:4px}
+.small div{background:#221d1a;border-radius:4px;padding:5px 6px;display:flex;justify-content:space-between;gap:4px;font:700 8.5px/1 sans-serif;letter-spacing:.06em;color:var(--mut);cursor:ns-resize;touch-action:none;white-space:nowrap}
+.small div b{color:var(--ink);font-family:ui-monospace,monospace}
+.small div.clk{cursor:pointer}
+.ks{position:absolute;left:4px;right:4px;bottom:4px;background:#2b2521;border:1px solid #000;border-radius:8px;padding:8px;display:none;flex-direction:column;gap:5px;z-index:4;box-shadow:0 10px 24px #000a}
+.ks.on{display:flex}
+.ks .small div{background:#1a1613}
+.glob{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px;margin-top:10px}
+#pe{height:46px}
+.hint{font:500 10.5px/1.3 -apple-system,sans-serif;color:var(--mut);margin-top:8px;text-align:center}
+#midi{font:500 10px/1 ui-monospace,monospace;color:var(--mut);letter-spacing:.06em}
+</style>
+</head>
+<body>
+<div id="fit"><div id="stage"><div class="body">
+  <div class="top">
+    <div class="logo"><div class="a"><span class="s">S33</span><span class="n">HEXA</span></div><small>SIX-OP FM · 16 VOICES</small></div>
+    <button id="pow" title="Start the audio">⏻</button>
+    <div class="lcd" id="lcd" title="Double-click to rename the voice"></div>
+    <div class="mem"><span class="cap">BANK</span><div class="row"><select class="mb" id="banksel" title="Banks: the S33 one and those you loaded"></select><button class="mb c1" id="load" title="Load a DX7 .syx file (a bank of 32 voices or a single voice)">LOAD .SYX</button><button class="mb dark" id="savesyx" title="Save this bank as a DX7 .syx file">SAVE .SYX</button></div></div>
+    <div class="mem"><span class="cap">VOICE</span><div class="row"><button class="mb dark" id="store" title="Write the edited voice into the bank (it bakes in the EASY knobs too)">STORE</button><button class="mb dark" id="cmp" title="Hold to hear the voice as it is in the bank">COMPARE</button><button class="mb dark" id="init" title="Start from an empty voice (click twice)">INIT</button></div></div>
+    <span class="sp"></span>
+    <div class="tabs" id="tabs"><span data-p="easy">EASY</span><span data-p="deep">OPERATORS</span></div>
+  </div>
+  <div class="bank" id="bank"></div>
+
+  <div class="page" id="easy">
+    <div class="easy">
+      <div class="pnl"><div class="ph"><h3>PERFORM</h3><span class="ln"></span><span class="cap">THE SIX OPERATORS AT ONCE · STORE KEEPS THE RESULT</span></div><div class="macros" id="macros"></div></div>
+      <div class="fx">
+        <div class="pnl"><div class="ph"><h3>CHARACTER</h3><span class="ln"></span><span class="cap">LIVE HARMONICS</span></div><canvas id="spec"></canvas>
+          <div class="row" style="margin-top:10px;justify-content:center"><span class="cap" id="chr"></span></div></div>
+        <div class="pnl"><div class="ph"><h3>EFFECTS</h3><span class="ln"></span><span class="cap">NOT IN THE ORIGINAL</span></div><div class="mini" id="fxk"></div></div>
+        <div class="pnl"><div class="ph"><h3>PLAY</h3><span class="ln"></span><span id="midi">MIDI: —</span></div><div class="mini" id="playk"></div>
+          <div class="row" style="margin-top:10px;justify-content:center" id="modes"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page" id="deep">
+    <div class="deep">
+      <div class="pnl"><div class="ph"><h3>ALGORITHM</h3><span class="ln"></span><span class="cap" id="algn"></span></div>
+        <svg id="alg" width="300" height="300" viewBox="0 0 300 300" style="display:block;margin:0 auto"></svg>
+        <div class="algs" id="algs"></div>
+        <div class="row" style="margin-top:12px;justify-content:space-around;align-items:flex-start" id="algk"></div>
+      </div>
+      <div>
+        <div class="ops" id="ops"></div>
+        <div class="glob">
+          <div class="pnl" style="grid-column:span 2"><div class="ph"><h3>PITCH ENVELOPE</h3><span class="ln"></span></div><canvas class="env" id="pe"></canvas><div class="nums" id="pen" style="margin-top:6px"></div></div>
+          <div class="pnl" style="grid-column:span 2"><div class="ph"><h3>LFO</h3><span class="ln"></span></div><div class="row" style="justify-content:space-around" id="lfok"></div></div>
+          <div class="pnl" style="grid-column:span 2"><div class="ph"><h3>VOICE</h3><span class="ln"></span></div><div class="row" style="justify-content:space-around" id="vk"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="hint">Drag numbers and knobs up/down (Shift = fine) · drag the envelope points · double-click a knob to reset · Space plays a test note · the computer keyboard plays too (A W S E D F T G Y H U J K)</div>
+</div></div></div>
+<input type="file" id="file" accept=".syx,application/octet-stream" hidden>
+<script type="text/worklet" id="wk">/*@@WORKLET*/</script>
+<script>
+/*@@PATCHES*/
+/*@@APP*/
+</script>
+</body>
+</html>
